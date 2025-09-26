@@ -15,10 +15,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AuthModal } from "@/components/auth/AuthModal";
 
 export function Navbar() {
   const [isDark, setIsDark] = useState(false);
   const [language, setLanguage] = useState("UZ");
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // TODO: Replace with real auth state
 
   const toggleTheme = () => {
     setIsDark(!isDark);
@@ -80,9 +83,31 @@ export function Navbar() {
             </Link>
 
             {/* User Profile/Login */}
-            <Button variant="ghost" size="sm">
-              <User className="h-4 w-4" />
-            </Button>
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <User className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile">Profilim</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/owner">Mulkdor paneli</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
+                    Chiqish
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" size="sm" onClick={() => setAuthModalOpen(true)}>
+                <User className="h-4 w-4 mr-1" />
+                Kirish
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu */}
@@ -112,6 +137,12 @@ export function Navbar() {
           </div>
         </div>
       </div>
+      
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)}
+        defaultMode="login"
+      />
     </nav>
   );
 }
